@@ -17,7 +17,13 @@
             </li>
             <li class="menu-item -level-1"><a class="link title link-barista's-interactions-api" href="#barista's-interactions-api">Barista’s Interactions API</a>
             </li>
-            <li class="menu-item -level-1"><a class="link title link-barista's-assertions-api" href="#barista's-assertions-api">Barista’s Assertions API</a>
+            <li class="menu-item -level-1 -parent"><a class="link title link-barista's-assertions-api" href="#barista's-assertions-api">Barista’s Assertions API</a>
+              <ul class="submenu">
+                <li class="menu-item -level-2"><a class="link title link-custom-assertions" href="#custom-assertions">Custom assertions</a>
+                </li>
+              </ul>
+            </li>
+            <li class="menu-item -level-1"><a class="link title link-barista's-intents-api" href="#barista's-intents-api">Barista’s Intents API</a>
             </li>
             <li class="menu-item -level-1"><a class="link title link-runtime-permissions" href="#runtime-permissions">Runtime Permissions</a>
             </li>
@@ -29,6 +35,8 @@
                 </li>
                 <li class="menu-item -level-2"><a class="link title link-one-rule-to-rule-them-all" href="#one-rule-to-rule-them-all">One rule to rule them all</a>
                 </li>
+                <li class="menu-item -level-2"><a class="link title link-writing-tests-in-kotlin" href="#writing-tests-in-kotlin">Writing tests in Kotlin?</a>
+                </li>
               </ul>
             </li>
           </ul>
@@ -39,23 +47,41 @@
           <div class="right">
           </div>
         </div>
-        <div class="markdown-body"><p><a href="https://travis-ci.org/SchibstedSpain/Barista"><img src="https://travis-ci.org/SchibstedSpain/Barista.svg?branch=master" alt="Build Status"></a>
-<a href="https://bintray.com/schibstedspain/maven/barista/_latestVersion"><img src="https://api.bintray.com/packages/schibstedspain/maven/barista/images/download.svg" alt="Download"></a></p>
-<h1 id="barista">Barista</h1>
+        <div class="markdown-body"><h1 id="barista">Barista</h1>
 <p><strong>The guy who serves a great Espresso</strong></p>
-<p><img src="barista-logo-300.png" alt="Barista logo"></p>
+<p><a href="https://travis-ci.org/SchibstedSpain/Barista"><img src="https://img.shields.io/travis/rust-lang/rust.svg?label=Travis+CI" alt="Travis"></a>
+<a href="https://bintray.com/schibstedspain/maven/barista/_latestVersion"><img src="https://api.bintray.com/packages/schibstedspain/maven/barista/images/download.svg" alt="Download"></a></p>
 <p>Barista makes developing UI test faster, easier and more predictable. Built on top of Espresso, it provides a simple an discoverable API, removing most of the boilerplate and verbosity of common Espresso tasks. You and your Android team will write tests with no effort.</p>
+<ul>
+<li><a href="#download">Download</a></li>
+<li><a href="#api-overview">API Overview</a>
+<ul>
+<li><a href="#baristas-interactions-api">Interactions</a></li>
+<li><a href="#baristas-assertions-api">Assertions</a></li>
+<li><a href="#baristas-intents-api">Intents</a></li>
+<li><a href="#runtime-permissions">Runtime Permissions</a></li>
+<li><a href="#useful-test-rules">Useful test rules</a>
+<ul>
+<li><a href="#reseting-app-data">Reseting app data</a></li>
+<li><a href="#dealing-with-flaky-tests">Dealing with Flaky tests</a></li>
+<li><a href="#one-rule-to-rule-them-all">One rule to rule them all</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#magic-that-barista-does-for-you">Magic that Barista does for you</a></li>
+<li><a href="#license">License</a></li>
+</ul>
 <h1 id="download">Download</h1>
-<p><em>Psst, hey. Migrating to Barista 2.0? <a href="https://github.com/SchibstedSpain/Barista/blob/master/MIGRATION-2.md">Check out this guide</a> to help you with the transition.</em></p>
 <p>Import Barista as a testing dependency:</p>
-<pre><code class="lang-gradle">androidTestCompile(<span class="pl-s">&apos;com.schibsted.spain:barista:2.0.0&apos;</span>) {
+<pre><code class="lang-gradle">androidTestImplementation(<span class="pl-s">&apos;com.schibsted.spain:barista:2.7.0&apos;</span>) {
   <span class="pl-k">exclude</span> <span class="pl-k">group</span>: <span class="pl-s">&apos;com.android.support&apos;</span>
   <span class="pl-k">exclude</span> <span class="pl-k">group</span>: <span class="pl-s">&apos;org.jetbrains.kotlin&apos;</span> <span class="pl-c">// Only if you already use Kotlin in your project</span>
 }
 </code></pre>
 <p>You might need to include the Google Maven repository, required by Espresso 3:</p>
 <pre><code class="lang-gradle"><span class="pl-k">repositories</span> {
-    maven { url <span class="pl-s">&quot;https://maven.google.com&quot;</span> }
+    google()
 }
 </code></pre>
 <p>Barista already includes <code>espresso-core</code> and <code>espresso-contrib</code>. If you need <a href="https://developer.android.com/topic/libraries/testing-support-library/packages.html#atsl-dependencies">any other Espresso package</a> you can add them yourself.</p>
@@ -78,11 +104,15 @@ clickMenu(R.id.menu_item);
 <span class="pl-c">// Writing into widgets</span>
 writeTo(R.id.edittext, <span class="pl-s">&quot;A great text&quot;</span>);
 writeToAutoComplete(R.id.autocomplete, <span class="pl-s">&quot;Another great text&quot;</span>);
+clearText(R.id.edittext)
 
 <span class="pl-c">// Operate on ListViews and RecyclerViews indistinctly by position</span>
 clickListItem(R.id.list, <span class="hljs-number">4</span>);
 clickListItemChild(R.id.list, <span class="hljs-number">3</span>, R.id.row_button);
 scrollListToPosition(R.id.list, <span class="hljs-number">4</span>);
+assertListItemCount(R.id.listId, <span class="hljs-number">5</span>)
+assertDisplayedAtPosition(R.id.recycler, <span class="hljs-number">0</span>, <span class="pl-s">&quot;text&quot;</span>);
+assertDisplayedAtPosition(R.id.listId, <span class="hljs-number">0</span>, R.id.text_field, <span class="pl-s">&quot;text&quot;</span>);
 
 clickSpinnerItem(R.id.spinner, <span class="hljs-number">1</span>);
 
@@ -93,6 +123,7 @@ clickRadioButtonPosition(R.id.radiogroup, <span class="hljs-number">42</span>);
 
 <span class="pl-c">// Pick data on pickers</span>
 setDateOnPicker(<span class="hljs-number">1986</span>, <span class="hljs-number">03</span>, <span class="hljs-number">23</span>);
+setTimeOnPicker(<span class="hljs-number">17</span>, <span class="hljs-number">2</span>);
 
 <span class="pl-c">// Interact with dialogs</span>
 clickDialogPositiveButton();
@@ -101,6 +132,7 @@ clickDialogNegativeButton();
 
 <span class="pl-c">// Scroll on scrolls and pagers</span>
 scrollTo(R.id.far_away_widget);
+scrollTo(R.string.text);
 scrollTo(<span class="pl-s">&quot;A widget with this text&quot;</span>);
 swipeViewPagerForward();
 swipeViewPagerBack();
@@ -111,9 +143,19 @@ openDrawerWithGravity(Gravity.RIGHT);
 closeDrawer();
 closeDrawerWithGravity(Gravity.RIGHT);
 
+<span class="pl-c">// Interact with SeekBars</span>
+setProgressTo(R.id.seek_bar, <span class="hljs-number">5</span>);
+setProgressToMin(R.id.seek_bar);
+setProgressToMax(R.id.seek_bar);
+
+
 <span class="pl-c">// Pull to refresh in SwipeRefreshLayout</span>
 refresh(R.id.swipe_refresh);
 refresh(); <span class="pl-c">// Id is optional! We&apos;ll find it for you :D</span>
+
+<span class="pl-c">// Close or press ime actions on the Keyboard</span>
+closeKeyboard()
+pressImeActionButton()
 
 <span class="pl-c">// And another tricky feature, but try not to use it</span>
 sleep(<span class="hljs-number">2000</span>);
@@ -131,7 +173,6 @@ assertNotDisplayed(<span class="pl-s">&quot;Hello world&quot;</span>);
 assertNotDisplayed(R.string.hello_world);
 assertNotDisplayed(R.id.button);
 assertNotDisplayed(R.id.button, <span class="pl-s">&quot;Hello world&quot;</span>)
-
 
 <span class="pl-c">// Is this view enabled?</span>
 assertEnabled(<span class="pl-s">&quot;Hello world&quot;</span>);
@@ -166,15 +207,49 @@ assertFocused(<span class="pl-s">&quot;Button&quot;</span>)
 assertNotFocused(R.id.focused_view)
 assertNotFocused(<span class="pl-s">&quot;Button&quot;</span>)
 
+<span class="pl-c">// Is this ImageView showing a drawable?</span>
+assertHasAnyDrawable(R.id.image_view);
+assertHasDrawable(R.id.image_view, R.drawable.ic_barista);
+
+<span class="pl-c">// ...or not?</span>
+assertHasNoDrawable(R.id.image_view);
+
+<span class="pl-c">// Does this View have a background?</span>
+assertHasAnyBackground(R.id.view);
+assertHasBackground(R.id.view, R.drawable.ic_barista);
+
+<span class="pl-c">// ...or not?</span>
+assertHasNoBackground(R.id.view);
+
 <span class="pl-c">// What&apos;s the state of the Drawer?</span>
 assertDrawerIsOpen();
 assertDrawerIsOpenWithGravity(Gravity.RIGHT);
 assertDrawerIsClosed();
 assertDrawerIsClosedWithGravity(Gravity.RIGHT);
 
-<span class="pl-c">// Check EditText&apos;s hints</span>
+<span class="pl-c">// Check TextInputLayout and EditText&apos;s hints</span>
 assertHint(R.id.edittext, R.string.hint);
 assertHint(R.id.edittext, <span class="pl-s">&quot;Hint&quot;</span>);
+
+<span class="pl-c">// Check TextInputLayout and EditText&apos;s errors</span>
+assertError(R.id.edittext, R.string.error);
+assertError(R.id.edittext, <span class="pl-s">&quot;Error message&quot;</span>);
+
+<span class="pl-c">// Check if text on screen contains given text</span>
+assertContains(<span class="pl-s">&quot;text&quot;</span>);
+assertContains(R.id.textview, <span class="pl-s">&quot;text&quot;</span>);
+
+<span class="pl-c">// ...or not?</span>
+assertNotContains(<span class="pl-s">&quot;text&quot;</span>);
+assertNotContains(R.id.textview, <span class="pl-s">&quot;text&quot;</span>);
+
+<span class="pl-c">// Check text is given color</span>
+assertTextColorIs(R.id.someRedText, R.color.red);
+assertTextColorIs(R.id.someColorListText, R.color.state_list);
+
+<span class="pl-c">// ...or not?</span>
+assertTextColorIsNot(R.id.someRedText, R.color.blue);
+assertTextColorIsNot(R.id.someColorListText, R.color.another_state_list);
 
 <span class="pl-c">// Check recyclerView item count against expected item count</span>
 assertRecyclerViewItemCount(R.id.recycler, <span class="hljs-number">10</span>);
@@ -182,8 +257,47 @@ assertRecyclerViewItemCount(R.id.recycler, <span class="hljs-number">10</span>);
 <span class="pl-c">// And another tricky feature</span>
 assertThatBackButtonClosesTheApp();
 
-<span class="pl-c">// Is this ImageView showing this drawable?</span>
-assertDrawable(R.id.image_view, R.drawable.ic_barista);
+<span class="pl-c">// Is this ImageView showing a drawable?</span>
+assertHasAnyDrawable(R.id.image_view);
+assertHasDrawable(R.id.image_view, R.drawable.ic_barista);
+
+<span class="pl-c">// ...or not?</span>
+assertHasNoDrawable(R.id.image_view);
+
+
+<span class="pl-c">// Is this ProgressBar/SeekBar progress?</span>
+assertProgress(R.id.seek_bar, <span class="hljs-number">5</span>)
+assertProgressIsMin(R.id.seek_bar)
+assertProgressIsMax(R.id.seek_bar)
+
+
+</code></pre>
+<h3 id="custom-assertions">Custom assertions</h3>
+<p>If you have a special case not covered by the given assertions API, we encourage you to assert these special cases with our custom assertions API. It&apos;s a convenient way to replace plain <code>Matcher</code>s with complex assertions. With Barista, you can match any kind of view by knowing its type and passing its <code>viewId</code>, <code>text</code>, or a <code>Matcher&lt;View&gt;</code>. Once you matched it, you will be able to assert all its properties without adding any complex <code>Matcher</code> to your project.</p>
+<pre><code class="lang-kotlin">
+<span class="pl-c">// Matching a Button by text</span>
+assertAny&lt;Button&gt;(<span class="pl-s">&quot;Save&quot;</span>) {
+    it.enabled == <span class="pl-c1">true</span>
+}
+
+<span class="pl-c">// Matching a RadioGroup by id</span>
+assertAny&lt;RadioGroup&gt;(R.id.radioGroup) {
+    it.checkedRadioButtonId == R.id.option1
+}
+
+<span class="pl-c">// Matching a Progressbar by a Matcher</span>
+assertAny&lt;Progressbar&gt;(withId(R.id.progressBar)) {
+    it.progress == <span class="hljs-number">42</span>
+}
+
+<span class="pl-c">// You can also define the assertion description that will be shown if the assertion fails</span>
+assertAny&lt;RadioGroup&gt;(R.id.radioGroup, <span class="pl-s">&quot;selected option is the second one&quot;</span>) {
+    it.checkedRadioButtonId == R.id.option1
+}
+</code></pre>
+<h2 id="barista&apos;s-intents-api">Barista&#x2019;s Intents API</h2>
+<pre><code class="lang-java"><span class="pl-c">// Creates a Bitmap on a camera provided URI</span>
+mockAndroidCamera();
 </code></pre>
 <h2 id="runtime-permissions">Runtime Permissions</h2>
 <p>The new Marshmallow permissions system requires checking for permissions at runtime. As Espresso can&apos;t interact with the system dialog, Barista offers a way to allow permissions when needed.</p>
@@ -245,6 +359,8 @@ baristaRule.launchActivity();
 <li>Clear databases</li>
 <li>Clear files</li>
 </ul>
+<h3 id="writing-tests-in-kotlin">Writing tests in Kotlin?</h3>
+<p><a href="https://github.com/SchibstedSpain/Barista/issues/219">Check this link</a> to know how to use <code>@Rule</code> in Kotlin.</p>
 <h1 id="magic-that-barista-does-for-you">Magic that Barista does for you</h1>
 <p>In order to speed up testing, Barista keeps in mind some considerations.</p>
 <ul>
@@ -252,22 +368,6 @@ baristaRule.launchActivity();
 <li><strong>Scrolls on all views</strong>: Barista scrolls on all scrollable views, including <code>NestedScrollView</code>. Espresso only handles <code>ScrollView</code> and <code>HorizontalScrollView</code>, so people need to open questions on <a href="https://stackoverflow.com/questions/35272953/espresso-scrolling-not-working-when-nestedscrollview-or-recyclerview-is-in-coor">StackOverflow like this</a>. Or... just use <strong>Barista</strong>.</li>
 <li><strong>Just interacts with displayed Views</strong>: Interacting with <code>View</code>s inside a <code>ViewPager</code> throws <code>AmbiguousViewMatcherException</code>, because the views you interact with will be potentially repeated on different pages. Barista only interacts with displayed widgets, so you can focus on the behavior instead of wasting time on details.</li>
 </ul>
-<h1 id="license">License</h1>
-<pre><code>Copyright 2017 Schibsted Classified Media Spain S.L.
-
-
-Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-</code></pre>
 
         </div>
       </div>

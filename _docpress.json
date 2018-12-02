@@ -16,7 +16,19 @@
           {
             "title": "Barista’s Assertions API",
             "depth": 2,
-            "id": "barista's-assertions-api"
+            "id": "barista's-assertions-api",
+            "headings": [
+              {
+                "title": "Custom assertions",
+                "depth": 3,
+                "id": "custom-assertions"
+              }
+            ]
+          },
+          {
+            "title": "Barista’s Intents API",
+            "depth": 2,
+            "id": "barista's-intents-api"
           },
           {
             "title": "Runtime Permissions",
@@ -42,6 +54,11 @@
                 "title": "One rule to rule them all",
                 "depth": 3,
                 "id": "one-rule-to-rule-them-all"
+              },
+              {
+                "title": "Writing tests in Kotlin?",
+                "depth": 3,
+                "id": "writing-tests-in-kotlin"
               }
             ]
           }
@@ -64,7 +81,19 @@
         {
           "title": "Barista’s Assertions API",
           "depth": 2,
-          "id": "barista's-assertions-api"
+          "id": "barista's-assertions-api",
+          "headings": [
+            {
+              "title": "Custom assertions",
+              "depth": 3,
+              "id": "custom-assertions"
+            }
+          ]
+        },
+        {
+          "title": "Barista’s Intents API",
+          "depth": 2,
+          "id": "barista's-intents-api"
         },
         {
           "title": "Runtime Permissions",
@@ -90,6 +119,11 @@
               "title": "One rule to rule them all",
               "depth": 3,
               "id": "one-rule-to-rule-them-all"
+            },
+            {
+              "title": "Writing tests in Kotlin?",
+              "depth": 3,
+              "id": "writing-tests-in-kotlin"
             }
           ]
         }
@@ -97,7 +131,6 @@
     }
   },
   "sources": {
-    "README.md": "index.html",
-    "docs/barista-logo-300.png": "barista-logo-300.png"
+    "README.md": "index.html"
   }
 }
