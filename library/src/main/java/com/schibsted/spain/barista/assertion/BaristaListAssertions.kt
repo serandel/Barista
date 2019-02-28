@@ -1,11 +1,11 @@
 package com.schibsted.spain.barista.assertion
 
-import android.support.annotation.IdRes
-import android.support.test.espresso.Espresso
-import android.support.test.espresso.NoMatchingViewException
-import android.support.test.espresso.assertion.ViewAssertions
-import android.support.test.espresso.matcher.ViewMatchers
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.IdRes
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.NoMatchingViewException
+import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.ListView
 import com.schibsted.spain.barista.interaction.BaristaListInteractions.findListViewMatcher
@@ -67,7 +67,7 @@ object BaristaListAssertions {
 
         listView?.let {
           return when (it) {
-            is RecyclerView -> matchRecyclerView(listId, position, targetViewId, view)
+            is androidx.recyclerview.widget.RecyclerView -> matchRecyclerView(listId, position, targetViewId, view)
             is ListView -> matchListView(listId, position, targetViewId, view)
             else -> false
           }
@@ -105,7 +105,7 @@ object BaristaListAssertions {
     var childView: View? = null
 
     if (childView == null) {
-      val recyclerView: RecyclerView? = view.rootView.findViewById(recyclerViewId) as RecyclerView
+      val recyclerView: androidx.recyclerview.widget.RecyclerView? = view.rootView.findViewById(recyclerViewId) as androidx.recyclerview.widget.RecyclerView
       if (recyclerView != null && recyclerView.id == recyclerViewId) {
         val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
         viewHolder?.let { checkedViewHolder ->
